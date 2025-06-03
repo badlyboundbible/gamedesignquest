@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Chance Studios - Game Designer Simulator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #2C2C2C;
+            color: #FFFFFF;
+            image-rendering: pixelated;
+            overflow-x: hidden;
+        }
+        
+        #gameContainer {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .office-header {
+            background: #1a1a1a;
+            border: 4px solid #FFFFFF;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .studio-name {
+            color: #FF6B35;
+            font-size: 16px;
+            text-shadow: 2px 2px 0 #000000;
+        }
+        
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            font-size: 10px;
+        }
+        
+        .status-item {
+            color: #4A90E2;
+        }
+        
+        .status-item.critical {
+            color: #FF3333;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+        
+        .main-screen {
+            background: #1a1a1a;
+            border: 4px solid #FFFFFF;
+            padding: 20px;
+            position: relative;
+            min-height: 400px;
+        }
+        
+        .scene-description {
+            background: #000080;
+            border: 2px solid #FFFFFF;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 10px;
+            line-height: 1.8;
+        }
+        
+        .character-sprite {
+            width: 128px;
+            height: 128px;
+            margin: 20px auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .professor {
+            width: 64px;
+            height: 64px;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPCEtLSBQcm9mZXNzb3IgU3ByaXRlIC0tPgo8IS0tIEhlYWQgLS0+CjxyZWN0IHg9IjIwIiB5PSIxMiIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRkZEQkFDIi8+CjwhLS0gR2xhc3NlcyAtLT4KPHJlY3QgeD0iMjIiIHk9IjE4IiB3aWR0aD0iOCIgaGVpZ2h0PSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSIzNCIgeT0iMTgiIHdpZHRoPSI4IiBoZWlnaHQ9IjYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxyZWN0IHg9IjMwIiB5PSIyMCIgd2lkdGg9IjQiIGhlaWdodD0iMiIgZmlsbD0iIzAwMDAwMCIvPgo8IS0tIEhhaXIgKGdyYXkpIC0tPgo8cmVjdCB4PSIyMCIgeT0iOCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjgiIGZpbGw9IiM5OTk5OTkiLz4KPCEtLSBCZWFyZCAtLT4KPHJlY3QgeD0iMjQiIHk9IjI4IiB3aWR0aD0iMTYiIGhlaWdodD0iOCIgZmlsbD0iIzk5OTk5OSIvPgo8IS0tIEJvZHkgKHR3ZWVkIGphY2tldCkgLS0+CjxyZWN0IHg9IjE2IiB5PSIzNiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjI0IiBmaWxsPSIjOEI0NTEzIi8+CjwhLS0gVGllIC0tPgo8cmVjdCB4PSIzMCIgeT0iMzYiIHdpZHRoPSI0IiBoZWlnaHQ9IjE2IiBmaWxsPSIjQ0MwMDAwIi8+Cjwvc3ZnPg==') center no-repeat;
+            animation: professorBob 4s ease-in-out infinite;
+        }
+        
+        .developer {
+            width: 64px;
+            height: 64px;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPCEtLSBEZXZlbG9wZXIgU3ByaXRlIC0tPgo8IS0tIEhlYWQgLS0+CjxyZWN0IHg9IjIwIiB5PSIxMiIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRkZEQkFDIi8+CjwhLS0gRXllcyAoYmFncykgLS0+CjxyZWN0IHg9IjI0IiB5PSIyMCIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0iIzAwMDAwMCIvPgo8cmVjdCB4PSIzNiIgeT0iMjAiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiMwMDAwMDAiLz4KPHJlY3QgeD0iMjQiIHk9IjI0IiB3aWR0aD0iNCIgaGVpZ2h0PSIyIiBmaWxsPSIjOTk2NkNDIi8+CjxyZWN0IHg9IjM2IiB5PSIyNCIgd2lkdGg9IjQiIGhlaWdodD0iMiIgZmlsbD0iIzk5NjZDQyIvPgo8IS0tIE1lc3N5IEhhaXIgLS0+CjxyZWN0IHg9IjIwIiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iOCIgZmlsbD0iIzMzMzMzMyIvPgo8cmVjdCB4PSIxNiIgeT0iMTAiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiMzMzMzMzMiLz4KPHJlY3QgeD0iNDQiIHk9IjEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMzMzMzMzIi8+CjwhLS0gQm9keSAoaG9vZGllKSAtLT4KPHJlY3QgeD0iMTYiIHk9IjM2IiB3aWR0aD0iMzIiIGhlaWdodD0iMjQiIGZpbGw9IiM0NDQ0NDQiLz4KPCEtLSBDb2ZmZWUgY3VwIC0tPgo8cmVjdCB4PSI0OCIgeT0iNDAiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM2NjMzMDAiLz4KPHJlY3QgeD0iNTYiIHk9IjQyIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjNjYzMzAwIi8+Cjwvc3ZnPg==') center no-repeat;
+        }
+        
+        @keyframes professorBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .dialogue-box {
+            background: #000000;
+            border: 3px solid #FFFFFF;
+            padding: 20px;
+            margin: 20px 0;
+            font-size: 11px;
+            line-height: 1.8;
+            position: relative;
+        }
+        
+        .dialogue-box.professor {
+            border-color: #4A90E2;
+        }
+        
+        .dialogue-box.developer {
+            border-color: #FF6B35;
+        }
+        
+        .dialogue-box.system {
+            border-color: #FFD700;
+            background: #1a1a1a;
+        }
+        
+        .speaker-label {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #000000;
+            padding: 0 10px;
+            font-size: 10px;
+        }
+        
+        .professor .speaker-label {
+            color: #4A90E2;
+        }
+        
+        .developer .speaker-label {
+            color: #FF6B35;
+        }
+        
+        .system .speaker-label {
+            color: #FFD700;
+        }
+        
+        .choices-container {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .choice-btn {
+            background: #333333;
+            border: 3px solid #666666;
+            color: #FFFFFF;
+            padding: 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.1s;
+            text-align: left;
+        }
+        
+        .choice-btn:hover {
+            background: #4A90E2;
+            border-color: #FFFFFF;
+            transform: translateX(5px);
+        }
+        
+        .choice-btn.selected {
+            background: #FF6B35;
+            border-color: #FFD700;
+        }
+        
+        .notebook {
+            background: #FFF8DC;
+            color: #000000;
+            border: 3px solid #8B4513;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.3);
+        }
+        
+        .notebook h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            color: #8B4513;
+            margin-bottom: 10px;
+            text-decoration: underline;
+        }
+        
+        .notebook-entry {
+            margin: 10px 0;
+            padding-left: 20px;
+            border-left: 3px solid #8B4513;
+        }
+        
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            background: #000000;
+            color: #FFFFFF;
+            border: 2px solid #FFFFFF;
+            margin: 10px 0;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .concept-unlock {
+            background: #FFD700;
+            color: #000000;
+            border: 3px solid #FF6B35;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 12px;
+            animation: unlockGlow 1s ease-out;
+        }
+        
+        @keyframes unlockGlow {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .final-pitch {
+            background: #1a1a1a;
+            border: 4px solid #FFD700;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .pitch-title {
+            color: #FFD700;
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 #FF6B35;
+        }
+        
+        .save-btn {
+            background: #4A90E2;
+            color: #FFFFFF;
+            border: 4px solid #FFFFFF;
+            padding: 20px 40px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto;
+            transition: all 0.2s;
+        }
+        
+        .save-btn:hover {
+            background: #FFD700;
+            color: #000000;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #FFD700;
+        }
+        
+        .failure-screen {
+            background: #CC0000;
+            color: #FFFFFF;
+            padding: 40px;
+            text-align: center;
+            font-size: 16px;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 600px) {
+            .studio-name { font-size: 12px; }
+            .status-bar { font-size: 8px; }
+            .dialogue-box { font-size: 9px; }
+            .choice-btn { font-size: 9px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div class="office-header">
+            <div class="studio-name">LAST CHANCE STUDIOS</div>
+            <div class="status-bar">
+                <div class="status-item">DAY: <span id="dayCount">1</span></div>
+                <div class="status-item critical">DAYS UNTIL CLOSURE: <span id="daysLeft">30</span></div>
+                <div class="status-item">REPUTATION: <span id="reputation">⭐⭐</span></div>
+            </div>
+        </div>
+        
+        <div class="main-screen" id="mainScreen">
+            <div id="gameContent">
+                <!-- Dynamic content goes here -->
+            </div>
+        </div>
+        
+        <div id="notebook" class="notebook hidden">
+            <h3>GAME DESIGN NOTES</h3>
+            <div id="notebookContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Game state
+        const gameState = {
+            day: 1,
+            daysLeft: 30,
+            reputation: 2,
+            currentScene: 0,
+            playerChoices: {},
+            gameDesign: {
+                target: '',
+                concept: '',
+                challenge: '',  
+                playerType: '',
+                platform: '',
+                worldType: '',
+                progression: '',
+                narrative: '',
+                hook: ''
+            },
+            unlockedConcepts: [],
+            professorMood: 'neutral', // neutral, confused, excited, skeptical
+            budget: 1000,
+            designQuality: 0
+        };
+        
+        // Game flow
+        const scenes = [
+            // Scene 0: Opening
+            {
+                type: 'narrative',
+                description: 'Your office is a mess. Empty coffee cups tower precariously on every surface. The eviction notice on your door gives you 30 days. One last chance to make a hit game...',
+                dialogue: [
+                    { speaker: 'developer', text: "This is it. If we don't land a client today, Last Chance Studios becomes Last Chance Parking Lot." }
+                ],
+                next: () => nextScene()
+            },
+            
+            // Scene 1: The Professor Arrives
+            {
+                type: 'narrative',
+                description: 'The door creaks open. In walks a disheveled professor, clutching a briefcase overflowing with papers.',
+                character: 'professor',
+                dialogue: [
+                    { speaker: 'professor', text: "Are you the... *checks crumpled note* ...game developers? I need help. My students are failing quantum mechanics at an alarming rate." },
+                    { speaker: 'developer', text: "(This is it. Don't mess this up.)" }
+                ],
+                next: () => nextScene()
+            },
+            
+            // Scene 2: Getting the Brief
+            {
+                type: 'choice',
+                description: 'The professor looks expectantly at you.',
+                dialogue: [
+                    { speaker: 'professor', text: "I've tried everything. PowerPoints, demonstrations, interpretive dance... Nothing works. I need a game that will make them understand!" }
+                ],
+                choices: [
+                    {
+                        text: "Tell me about your students. What are they like?",
+                        response: { speaker: 'professor', text: "Ah, good question! They're second-year physics students, 19-21 years old. Smart but... easily distracted. They spend more time on their phones than in my lectures." },
+                        action: () => {
+                            gameState.gameDesign.target = 'University students aged 19-21, tech-savvy but struggling with complex concepts';
+                            unlockConcept('Player Empathy', 'Understanding your target audience is the first step in game design.');
+                            gameState.designQuality += 10;
+                        }
+                    },
+                    {
+                        text: "What exactly do they need to learn?",
+                        response: { speaker: 'professor', text: "Wave-particle duality, superposition, quantum entanglement... The basics! But they look at me like I'm speaking Klingon." },
+                        action: () => {
+                            gameState.gameDesign.concept = 'Quantum mechanics fundamentals';
+                            gameState.professorMood = 'confused';
+                        }
+                    },
+                    {
+                        text: "How much are you paying?",
+                        response: { speaker: 'professor', text: "Straight to business, eh? The university has allocated... *shuffles papers* ...$5000 for educational resources." },
+                        action: () => {
+                            gameState.budget = 5000;
+                            gameState.reputation -= 1;
+                            updateStatus();
+                        }
+                    }
+                ],
+                next: () => nextScene()
+            },
+            
+            // Scene 3: Understanding the Problem
+            {
+                type: 'choice',
+                description: 'You lean forward, notebook in hand.',
+                dialogue: [
+                    { speaker: 'developer', text: "What makes quantum mechanics so hard for them to grasp?" }
+                ],
+                choices: [
+                    {
+                        text: "Is it the math that's the problem?",
+                        response: { speaker: 'professor', text: "No, they can handle the math. It's the concepts - they can't visualize how a particle can be in two places at once!" },
+                        action: () => {
+                            gameState.gameDesign.challenge = 'Visualization of abstract concepts';
+                            unlockConcept('Core Challenge', 'Every game needs a clear problem to solve.');
+                        }
+                    },
+                    {
+                        text: "Have they played educational games before?",
+                        response: { speaker: 'professor', text: "They play games constantly! Just... not educational ones. They're always talking about 'grinding' and 'leveling up'." },
+                        action: () => {
+                            gameState.playerChoices.gamerAudience = true;
+                            unlockConcept('Player Motivation', 'Players need intrinsic reasons to engage.');
+                        }
+                    }
+                ],
+                next: () => nextScene()
+            },
+            
+            // Scene 4: Bartle's Taxonomy Introduction
+            {
+                type: 'narrative',
+                description: 'You remember something from your game design training...',
+                dialogue: [
+                    { speaker: 'system', text: "CONCEPT UNLOCKED: Bartle's Player Types!" },
+                    { speaker: 'developer', text: "Professor, when your students play games, what do they enjoy most? Competing? Exploring? Achieving goals? Or socializing?" }
+                ],
+                next: () => nextScene()
+            },
+            
+            // Scene 5: Choosing Player Type Focus
+            {
+                type: 'choice',
+                description: 'The professor thinks carefully.',
+                dialogue: [
+                    { speaker: 'professor', text: "Well, they're quite diverse actually. Some are very competitive, others love to explore every possibility..." }
+                ],
+                choices: [
+                    {
+                        text: "Let's focus on Achievers - give them clear goals and rewards",
+                        response: { speaker: 'professor', text: "Yes! They do love getting good grades. Perhaps quantum achievements?" },
+                        action: () => {
+                            gameState.gameDesign.playerType = 'achiever';
+                            gameState.gameDesign.progression = 'Achievement-based with quantum badges and certificates';
+                            unlockConcept('Achiever Design', 'Collectibles, progress bars, and clear goals motivate achievers.');
+                            gameState.designQuality += 15;
+                        }
+                    },
+                    {
+                        text: "Let's target Explorers - hide quantum secrets to discover",
+                        response: { speaker: 'professor', text: "Ooh, like hidden quantum states they can find by experimenting!" },
+                        action: () => {
+                            gameState.gameDesign.playerType = 'explorer';
+                            gameState.gameDesign.progression = 'Discovery-based with hidden quantum phenomena';
+                            unlockConcept('Explorer Design', 'Hidden content and experimentation motivate explorers.');
+                            gameState.designQuality += 15;
+                        }
+                    },
+                    {
+                        text: "Make it social - they can teach each other quantum mechanics",
+                        response: { speaker: 'professor', text: "Collaborative quantum experiments? That could work!" },
+                        action: () => {
+                            gameState.gameDesign.playerType = 'socializer';
+                            gameState.gameDesign.progression = 'Peer learning and quantum puzzle cooperation';
+                            unlockConcept('Socializer Design', 'Cooperation and communication motivate socializers.');
+                            gameState.designQuality += 15;
+                        }
+                    }
+                ],
+                next: () => nextScene()
+            },
+            
+            // Scene 6: Platform Decision
+            {
+                type: 'narrative',
+                description: 'Time to decide on the game format.',
+                dialogue: [
+                    { speaker: 'developer', text: "Now, let's think about HOW they'll play this game. The platform should serve the learning objective, not the other way around." }
+                ],
+                next: () => nextScene()
+            },
+            
+            // Scene 7: Platform Choice
+            {
+                type: 'choice',
+                description: 'You sketch out different options.',
+                dialogue: [
+                    { speaker: 'developer', text: "For visualizing quantum states and allowing experimentation, what would work best?" }
+                ],
+                choices: [
+                    {
+                        text: "A digital simulation - they can manipulate quantum particles directly",
+                        response: { speaker: 'professor', text: "Yes! They could see superposition in real-time!" },
+                        action: () => {
+                            gameState.gameDesign.platform = 'Digital simulation game';
+                            gameState.gameDesign.worldType = 'Interactive quantum laboratory';
+                            unlockConcept('Digital Games', 'Best for complex simulations and visual feedback.');
+                            gameState.designQuality += 10;
+                        }
+                    },
+                    {
+                        text: "A card game - each card represents a quantum state",
+                        response: { speaker: 'professor', text: "Interesting... They could combine cards to create entanglement!" },
+                        action: () => {
+                            gameState.gameDesign.platform = 'Physical card game';
+                            gameState.gameDesign.worldType = 'Quantum card battles';
+                            unlockConcept('Analog Games', 'Great for social interaction and tangible learning.');
+                            gameState.designQuality += 10;
+                        }
+                    },
+                    {
+                        text: "An AR game - quantum effects in the real world",
+                        response: { speaker: 'professor', text: "They do love their phones... Seeing quantum effects in the classroom could be powerful!" },
+                        action: () => {
+                            gameState.gameDesign.platform = 'Augmented Reality mobile game';
+                            gameState.gameDesign.worldType = 'Real world with quantum overlay';
+                            unlockConcept('Emerging Platforms', 'New technologies can create unique experiences.');
+                            gameState.designQuality += 10;
+                        }
+                    }
+                ],
+                next: () => nextScene()
+            },
+            
+            // Scene 8: Narrative Structure
+            {
+                type: 'choice',
+                description: 'Every game needs a story, even educational ones.',
+                dialogue: [
+                    { speaker: 'developer', text: "What kind of narrative would make quantum mechanics feel relevant to them?" }
+                ],
+                choices: [
+                    {
+                        text: "You're a quantum scientist saving the universe",
+                        response: { speaker: 'professor', text: "Ooh, dramatic! Using quantum mechanics to prevent cosmic disaster!" },
+                        action: () => {
+                            gameState.gameDesign.narrative = 'Hero scientist uses quantum mechanics to save reality';
+                            unlockConcept('Hero\'s Journey', 'Players become the protagonist of their learning.');
+                            gameState.designQuality += 10;
+                        }
+                    },
+                    {
+                        text: "You're debugging a quantum computer",
+                        response: { speaker: 'professor', text: "Very practical! They'll be working with quantum computers in a few years." },
+                        action: () => {
+                            gameState.gameDesign.narrative = 'IT specialist solving quantum computing puzzles';
+                            unlockConcept('Practical Narrative', 'Real-world applications increase relevance.');
+                            gameState.designQuality += 10;
+                        }
+                    },
+                    {
+                        text: "You're a particle experiencing quantum effects firsthand",
+                        response: { speaker: 'professor', text: "Meta! They become what they're studying!" },
+                        action: () => {
+                            gameState.gameDesign.narrative = 'First-person particle navigating quantum realm';
+                            unlockConcept('Perspective Shift', 'Changing viewpoint can unlock understanding.');
+                            gameState.designQuality += 10;
+                        }
+                    }
+                ],
+                next: () => nextScene()
+            },
+            
+            // Scene 9: The Hook
+            {
+                type: 'input',
+                description: 'Time for the elevator pitch.',
+                dialogue: [
+                    { speaker: 'developer', text: "Now, in one sentence - why would a student choose to play this over scrolling social media?" }
+                ],
+                inputPrompt: "Write your game's hook:",
+                action: (value) => {
+                    gameState.gameDesign.hook = value;
+                    if (value.length > 20) {
+                        gameState.designQuality += 20;
+                        unlockConcept('The Hook', 'A compelling one-liner can make or break a game.');
+                    }
+                },
+                next: () => nextScene()
+            },
+            
+            // Scene 10: Final Presentation
+            {
+                type: 'narrative',
+                description: 'You present your complete game design to the professor.',
+                dialogue: [
+                    { speaker: 'developer', text: "Here's what we've designed for your students..." }
+                ],
+                next: () => showFinalPitch()
+            }
+        ];
+        
+        let currentDialogueIndex = 0;
+        
+        function nextScene() {
+            gameState.currentScene++;
+            if (gameState.currentScene < scenes.length) {
+                renderScene();
+            }
+        }
+        
+        function renderScene() {
+            const scene = scenes[gameState.currentScene];
+            const content = document.getElementById('gameContent');
+            content.innerHTML = '';
+            content.className = 'fade-in';
+            
+            // Add scene description
+            if (scene.description) {
+                const desc = document.createElement('div');
+                desc.className = 'scene-description';
+                desc.textContent = scene.description;
+                content.appendChild(desc);
+            }
+            
+            // Add character sprite if specified
+            if (scene.character) {
+                const sprite = document.createElement('div');
+                sprite.className = 'character-sprite';
+                sprite.innerHTML = `<div class="${scene.character}"></div>`;
+                content.appendChild(sprite);
+            }
+            
+            // Handle different scene types
+            if (scene.type === 'narrative') {
+                currentDialogueIndex = 0;
+                showDialogue(scene);
+            } else if (scene.type === 'choice') {
+                showChoiceScene(scene);
+            } else if (scene.type === 'input') {
+                showInputScene(scene);
+            }
+        }
+        
+        function showDialogue(scene) {
+            const content = document.getElementById('gameContent');
+            
+            if (currentDialogueIndex < scene.dialogue.length) {
+                const dialogue = scene.dialogue[currentDialogueIndex];
+                const box = createDialogueBox(dialogue.speaker, dialogue.text);
+                content.appendChild(box);
+                
+                const continueBtn = document.createElement('button');
+                continueBtn.className = 'choice-btn';
+                continueBtn.textContent = '▶ Continue';
+                continueBtn.onclick = () => {
+                    currentDialogueIndex++;
+                    if (currentDialogueIndex < scene.dialogue.length) {
+                        showDialogue(scene);
+                    } else {
+                        scene.next();
+                    }
+                };
+                content.appendChild(continueBtn);
+            }
+        }
+        
+        function showChoiceScene(scene) {
+            const content = document.getElementById('gameContent');
+            
+            // Show initial dialogue
+            scene.dialogue.forEach(d => {
+                content.appendChild(createDialogueBox(d.speaker, d.text));
+            });
+            
+            // Show choices
+            const choicesDiv = document.createElement('div');
+            choicesDiv.className = 'choices-container';
+            
+            scene.choices.forEach((choice, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = choice.text;
+                btn.onclick = () => {
+                    // Show response
+                    content.innerHTML = '';
+                    if (scene.description) {
+                        const desc = document.createElement('div');
+                        desc.className = 'scene-description';
+                        desc.textContent = scene.description;
+                        content.appendChild(desc);
+                    }
+                    
+                    content.appendChild(createDialogueBox(choice.response.speaker, choice.response.text));
+                    
+                    // Execute action
+                    if (choice.action) {
+                        choice.action();
+                    }
+                    
+                    // Continue button
+                    const continueBtn = document.createElement('button');
+                    continueBtn.className = 'choice-btn';
+                    continueBtn.textContent = '▶ Continue';
+                    continueBtn.onclick = scene.next;
+                    content.appendChild(continueBtn);
+                    
+                    // Update notebook
+                    updateNotebook();
+                };
+                choicesDiv.appendChild(btn);
+            });
+            
+            content.appendChild(choicesDiv);
+        }
+        
+        function showInputScene(scene) {
+            const content = document.getElementById('gameContent');
+            
+            // Show dialogue
+            scene.dialogue.forEach(d => {
+                content.appendChild(createDialogueBox(d.speaker, d.text));
+            });
+            
+            // Show input
+            const inputContainer = document.createElement('div');
+            inputContainer.style.marginTop = '20px';
+            
+            const label = document.createElement('div');
+            label.style.marginBottom = '10px';
+            label.style.fontSize = '10px';
+            label.textContent = scene.inputPrompt;
+            inputContainer.appendChild(label);
+            
+            const input = document.createElement('textarea');
+            input.id = 'userInput';
+            input.placeholder = 'Type your answer here...';
+            inputContainer.appendChild(input);
+            
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'choice-btn';
+            submitBtn.textContent = '▶ Submit';
+            submitBtn.onclick = () => {
+                const value = document.getElementById('userInput').value.trim();
+                if (value) {
+                    scene.action(value);
+                    scene.next();
+                } else {
+                    alert('Please enter your response!');
+                }
+            };
+            inputContainer.appendChild(submitBtn);
+            
+            content.appendChild(inputContainer);
+        }
+        
+        function createDialogueBox(speaker, text) {
+            const box = document.createElement('div');
+            box.className = `dialogue-box ${speaker}`;
+            
+            const label = document.createElement('div');
+            label.className = 'speaker-label';
+            label.textContent = speaker.toUpperCase();
+            box.appendChild(label);
+            
+            const textDiv = document.createElement('div');
+            textDiv.textContent = text;
+            box.appendChild(textDiv);
+            
+            return box;
+        }
+        
+        function unlockConcept(title, description) {
+            gameState.unlockedConcepts.push({ title, description });
+            
+            // Show unlock notification
+            const content = document.getElementById('gameContent');
+            const unlock = document.createElement('div');
+            unlock.className = 'concept-unlock';
+            unlock.innerHTML = `
+                <div style="font-size: 14px; margin-bottom: 10px;">✨ CONCEPT UNLOCKED ✨</div>
+                <div style="font-size: 12px; font-weight: bold;">${title}</div>
+                <div style="font-size: 10px; margin-top: 10px;">${description}</div>
+            `;
+            content.appendChild(unlock);
+            
+            setTimeout(() => {
+                unlock.style.display = 'none';
+            }, 3000);
+        }
+        
+        function updateNotebook() {
+            const notebook = document.getElementById('notebook');
+            const content = document.getElementById('notebookContent');
+            
+            if (Object.values(gameState.gameDesign).some(v => v !== '')) {
+                notebook.classList.remove('hidden');
+                
+                content.innerHTML = '';
+                
+                // Add game design details
+                const entries = [
+                    { label: 'Target Audience', value: gameState.gameDesign.target },
+                    { label: 'Core Concept', value: gameState.gameDesign.concept },
+                    { label: 'Main Challenge', value: gameState.gameDesign.challenge },
+                    { label: 'Player Type Focus', value: gameState.gameDesign.playerType },
+                    { label: 'Platform', value: gameState.gameDesign.platform },
+                    { label: 'World Design', value: gameState.gameDesign.worldType },
+                    { label: 'Progression System', value: gameState.gameDesign.progression },
+                    { label: 'Narrative', value: gameState.gameDesign.narrative },
+                    { label: 'Hook', value: gameState.gameDesign.hook }
+                ];
+                
+                entries.forEach(entry => {
+                    if (entry.value) {
+                        const div = document.createElement('div');
+                        div.className = 'notebook-entry';
+                        div.innerHTML = `<strong>${entry.label}:</strong> ${entry.value}`;
+                        content.appendChild(div);
+                    }
+                });
+                
+                // Add unlocked concepts
+                if (gameState.unlockedConcepts.length > 0) {
+                    const conceptsTitle = document.createElement('h3');
+                    conceptsTitle.textContent = 'LEARNED CONCEPTS';
+                    conceptsTitle.style.marginTop = '20px';
+                    content.appendChild(conceptsTitle);
+                    
+                    gameState.unlockedConcepts.forEach(concept => {
+                        const div = document.createElement('div');
+                        div.className = 'notebook-entry';
+                        div.innerHTML = `<strong>${concept.title}:</strong> ${concept.description}`;
+                        content.appendChild(div);
+                    });
+                }
+            }
+        }
+        
+        function updateStatus() {
+            document.getElementById('dayCount').textContent = gameState.day;
+            document.getElementById('daysLeft').textContent = gameState.daysLeft;
+            document.getElementById('reputation').textContent = '⭐'.repeat(Math.max(0, gameState.reputation));
+        }
+        
+        function showFinalPitch() {
+            const content = document.getElementById('gameContent');
+            content.innerHTML = '';
+            
+            // Calculate success
+            const successScore = gameState.designQuality;
+            const passed = successScore >= 50;
+            
+            if (passed) {
+                const pitch = document.createElement('div');
+                pitch.className = 'final-pitch';
+                pitch.innerHTML = `
+                    <div class="pitch-title">GAME PITCH COMPLETE!</div>
+                    <div style="margin: 20px 0; font-size: 12px; line-height: 1.8;">
+                        <p>Design Quality Score: ${successScore}/100</p>
+                        <p style="margin-top: 20px;">${gameState.gameDesign.hook}</p>
+                    </div>
+                `;
+                content.appendChild(pitch);
+                
+                const profResponse = createDialogueBox('professor', 
+                    successScore >= 80 ? 
+                    "This is BRILLIANT! Exactly what my students need! You've saved my curriculum!" :
+                    "This could work! I can see my students actually enjoying this. Let's do it!"
+                );
+                content.appendChild(profResponse);
+                
+                // Success!
+                const success = document.createElement('div');
+                success.className = 'concept-unlock';
+                success.style.marginTop = '20px';
+                success.innerHTML = `
+                    <div style="font-size: 16px;">🎉 CONTRACT SECURED! 🎉</div>
+                    <div style="font-size: 12px; margin-top: 10px;">Last Chance Studios lives to develop another day!</div>
+                `;
+                content.appendChild(success);
+                
+                // Generate game design document
+                const genBtn = document.createElement('button');
+                genBtn.className = 'save-btn';
+                genBtn.textContent = '📋 GENERATE GAME DESIGN DOCUMENT';
+                genBtn.onclick = generateDocument;
+                content.appendChild(genBtn);
+                
+            } else {
+                const failure = document.createElement('div');
+                failure.className = 'failure-screen';
+                failure.innerHTML = `
+                    <div style="font-size: 20px; margin-bottom: 20px;">PITCH FAILED</div>
+                    <div>The professor leaves, unconvinced. Your design lacked cohesion.</div>
+                    <div style="margin-top: 20px;">Design Quality: ${successScore}/100 (Needed: 50)</div>
+                    <button class="choice-btn" onclick="location.reload()" style="margin-top: 20px;">TRY AGAIN</button>
+                `;
+                content.appendChild(failure);
+            }
+        }
+        
+        function generateDocument() {
+            const doc = document.createElement('div');
+            doc.style.background = '#FFFFFF';
+            doc.style.color = '#000000';
+            doc.style.padding = '40px';
+            doc.style.fontFamily = 'Arial, sans-serif';
+            doc.style.lineHeight = '1.6';
+            doc.style.maxWidth = '800px';
+            doc.style.margin = '20px auto';
+            doc.style.boxShadow = '0 0 20px rgba(0,0,0,0.3)';
+            
+            const playerTypes = {
+                achiever: 'Achievers - Players motivated by collecting and completing goals',
+                explorer: 'Explorers - Players motivated by discovery and experimentation',
+                socializer: 'Socialisers - Players motivated by interaction and cooperation'
+            };
+            
+            doc.innerHTML = `
+                <h1 style="color: #4A90E2; border-bottom: 3px solid #4A90E2; padding-bottom: 10px;">
+                    GAME DESIGN DOCUMENT
+                </h1>
+                <h2 style="color: #FF6B35; margin-top: 20px;">Project: Quantum Mechanics Educational Game</h2>
+                <h3 style="color: #333; margin: 20px 0 10px 0;">Client: University Physics Department</h3>
+                
+                <div style="margin: 30px 0;">
+                    <h3 style="color: #4A90E2;">EXECUTIVE SUMMARY</h3>
+                    <p style="font-size: 16px; font-style: italic;">"${gameState.gameDesign.hook}"</p>
+                </div>
+                
+                <div style="margin: 30px 0;">
+                    <h3 style="color: #4A90E2;">1. PERSON - Target Audience</h3>
+                    <p><strong>Primary Audience:</strong> ${gameState.gameDesign.target}</p>
+                    <p><strong>Player Type Focus:</strong> ${playerTypes[gameState.gameDesign.playerType] || 'Mixed player types'}</p>
+                    <p><strong>Core Learning Objective:</strong> ${gameState.gameDesign.concept}</p>
+                    <p><strong>Key Challenge to Address:</strong> ${gameState.gameDesign.challenge}</p>
+                </div>
+                
+                <div style="margin: 30px 0;">
+                    <h3 style="color: #4A90E2;">2. BEHAVIOUR - Player Motivation</h3>
+                    <p>${gameState.gameDesign.progression}</p>
+                    <p>Players will be motivated through game mechanics that align with their natural play preferences while reinforcing quantum mechanics concepts.</p>
+                </div>
+                
+                <div style="margin: 30px 0;">
+                    <h3 style="color: #4A90E2;">3. WORLD - Game Environment</h3>
+                    <p><strong>Platform:</strong> ${gameState.gameDesign.platform}</p>
+                    <p><strong>Setting:</strong> ${gameState.gameDesign.worldType}</p>
+                    <p>The game world will make abstract quantum concepts tangible and interactive.</p>
+                </div>
+                
+                <div style="margin: 30px 0;">
+                    <h3 style="color: #4A90E2;">4. EXPERIENCE - Player Journey</h3>
+                    <p>${gameState.gameDesign.progression}</p>
+                    <p>Players will progress through increasingly complex quantum scenarios, building understanding through hands-on experimentation.</p>
+                </div>
+                
+                <div style="margin: 30px 0;">
+                    <h3 style="color: #4A90E2;">5. STORY - Narrative Framework</h3>
+                    <p>${gameState.gameDesign.narrative}</p>
+                    <p>This narrative provides context and emotional investment in learning quantum mechanics.</p>
+                </div>
+                
+                <div style="margin: 30px 0;">
+                    <h3 style="color: #4A90E2;">6. COMMUNICATION - Marketing Hook</h3>
+                    <p style="font-size: 18px; text-align: center; background: #F0F0F0; padding: 20px; border-left: 5px solid #FF6B35;">
+                        "${gameState.gameDesign.hook}"
+                    </p>
+                </div>
+                
+                <div style="margin: 30px 0;">
+                    <h3 style="color: #4A90E2;">LEARNED DESIGN CONCEPTS</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        ${gameState.unlockedConcepts.map(c => `
+                            <li style="margin: 10px 0; padding: 10px; background: #F5F5F5; border-left: 3px solid #4A90E2;">
+                                <strong>${c.title}:</strong> ${c.description}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+                
+                <div style="margin: 40px 0; text-align: center; color: #666;">
+                    <p>Generated on ${new Date().toLocaleDateString()}</p>
+                    <p>Last Chance Studios - "Making Learning Legendary"</p>
+                </div>
+            `;
+            
+            document.getElementById('gameContainer').appendChild(doc);
+            
+            // Add print button
+            const printBtn = document.createElement('button');
+            printBtn.className = 'save-btn';
+            printBtn.textContent = '🖨️ PRINT / SAVE AS PDF';
+            printBtn.onclick = () => window.print();
+            printBtn.style.marginBottom = '40px';
+            doc.appendChild(printBtn);
+        }
+        
+        // Initialize game
+        updateStatus();
+        renderScene();
